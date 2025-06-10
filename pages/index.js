@@ -281,13 +281,12 @@ export default function Home() {
         </div>
 
         {/* Cart Button */}
-        <div className="fixed bottom-8 right-8">
+        <div className="fixed bottom-8 right-8 z-40">
           <Button
-            size="lg"
             onClick={() => setShowReceipt(!showReceipt)}
-            className="shadow-lg bg-primary hover:bg-primary/90"
+            className="shadow-xl h-14 px-8 text-lg font-semibold bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
           >
-            <ShoppingCart className="mr-2 h-5 w-5" />
+            <ShoppingCart className="mr-2 h-6 w-6" />
             Cart ({Object.keys(purchases).length})
           </Button>
         </div>
