@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { billionaires, items, getCheckoutMessage } from '../lib/data'
+import { billionaires, items, getCheckoutMessage, getCategoryMessage } from '../lib/data'
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 import { Select } from '../components/ui/select'
@@ -84,6 +84,30 @@ export default function Home() {
 
   const getPercentageSpent = () => {
     return ((getTotalSpent() / selectedBillionaire.netWorth) * 100).toFixed(2)
+  }
+
+  const getMostSpentCategory = () => {
+    const categorySpending = {}
+    
+    Object.values(purchases).forEach(purchase => {
+      const item = items.find(i => i.id === purchase.id)
+      if (item) {
+        const totalSpent = purchase.price * purchase.quantity
+        categorySpending[item.category] = (categorySpending[item.category] || 0) + totalSpent
+      }
+    })
+    
+    let maxCategory = null
+    let maxSpent = 0
+    
+    Object.entries(categorySpending).forEach(([category, spent]) => {
+      if (spent > maxSpent) {
+        maxSpent = spent
+        maxCategory = category
+      }
+    })
+    
+    return maxCategory
   }
 
   const handleCheckout = () => {
@@ -355,10 +379,19 @@ export default function Home() {
                   </p>
                 </div>
                 
-                <div className="bg-accent rounded-lg p-4 mb-6">
-                  <p className="text-lg italic">
-                    "{getCheckoutMessage(parseFloat(getPercentageSpent()))}"
-                  </p>
+                <div className="space-y-4 mb-6">
+                  {getMostSpentCategory() && (
+                    <div className="bg-accent rounded-lg p-4">
+                      <p className="text-lg italic">
+                        "{getCategoryMessage(getMostSpentCategory())}"
+                      </p>
+                    </div>
+                  )}
+                  <div className="bg-accent rounded-lg p-4">
+                    <p className="text-lg italic">
+                      "{getCheckoutMessage(parseFloat(getPercentageSpent()))}"
+                    </p>
+                  </div>
                 </div>
                 
                 <div className="mb-6">
