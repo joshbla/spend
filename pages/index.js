@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { billionaires, items } from '../lib/data'
+import { billionaires, items, getCheckoutMessage } from '../lib/data'
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
 import { Select } from '../components/ui/select'
@@ -12,6 +12,7 @@ export default function Home() {
   const [remainingMoney, setRemainingMoney] = useState(selectedBillionaire.netWorth)
   const [purchases, setPurchases] = useState({})
   const [showReceipt, setShowReceipt] = useState(false)
+  const [showCheckout, setShowCheckout] = useState(false)
   const [darkMode, setDarkMode] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
 
@@ -83,6 +84,17 @@ export default function Home() {
 
   const getPercentageSpent = () => {
     return ((getTotalSpent() / selectedBillionaire.netWorth) * 100).toFixed(2)
+  }
+
+  const handleCheckout = () => {
+    setShowReceipt(false)
+    setShowCheckout(true)
+  }
+
+  const handleNewShopping = () => {
+    setPurchases({})
+    setRemainingMoney(selectedBillionaire.netWorth)
+    setShowCheckout(false)
   }
 
   return (
@@ -196,28 +208,28 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Receipt Button */}
+        {/* Cart Button */}
         <div className="fixed bottom-8 right-8">
           <Button
             size="lg"
             onClick={() => setShowReceipt(!showReceipt)}
-            className="shadow-lg"
+            className="shadow-lg bg-primary hover:bg-primary/90"
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            Receipt ({Object.keys(purchases).length})
+            Cart ({Object.keys(purchases).length})
           </Button>
         </div>
 
-        {/* Receipt Modal */}
+        {/* Cart Modal */}
         {showReceipt && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowReceipt(false)}>
             <div className="max-w-md w-full max-h-[80vh] overflow-hidden rounded-lg border bg-white dark:bg-zinc-900 shadow-xl" onClick={(e) => e.stopPropagation()}>
               <div className="p-6">
-                <h2 className="text-2xl font-bold mb-4">Your Receipt</h2>
+                <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
                 <ScrollArea className="h-[400px] mb-4">
                   {Object.values(purchases).length === 0 ? (
                     <p className="text-muted-foreground text-center py-8">
-                      No purchases yet
+                      Your cart is empty
                     </p>
                   ) : (
                     <div className="space-y-2">
@@ -243,7 +255,7 @@ export default function Home() {
                 
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center mb-2">
-                    <p className="font-semibold">Total Spent:</p>
+                    <p className="font-semibold">Total:</p>
                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                       {formatMoney(getTotalSpent())}
                     </p>
@@ -256,13 +268,67 @@ export default function Home() {
                   </div>
                 </div>
                 
-                <Button
-                  variant="outline"
-                  className="w-full mt-4"
-                  onClick={() => setShowReceipt(false)}
-                >
-                  Close
-                </Button>
+                <div className="space-y-2 mt-4">
+                  {Object.values(purchases).length > 0 && (
+                    <Button
+                      variant="default"
+                      className="w-full"
+                      onClick={handleCheckout}
+                    >
+                      Proceed to Checkout
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowReceipt(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Checkout Modal */}
+        {showCheckout && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowCheckout(false)}>
+            <div className="max-w-md w-full rounded-lg border bg-white dark:bg-zinc-900 shadow-xl" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 text-center">
+                <h2 className="text-2xl font-bold mb-6">Checkout Complete!</h2>
+                
+                <div className="mb-6">
+                  <p className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
+                    {formatMoney(getTotalSpent())}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {getPercentageSpent()}% of {selectedBillionaire.name}'s net worth
+                  </p>
+                </div>
+                
+                <div className="bg-accent rounded-lg p-4 mb-6">
+                  <p className="text-lg italic">
+                    "{getCheckoutMessage(parseFloat(getPercentageSpent()))}"
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Button
+                    variant="default"
+                    className="w-full"
+                    onClick={handleNewShopping}
+                  >
+                    Start New Shopping Spree
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setShowCheckout(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
