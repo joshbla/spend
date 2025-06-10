@@ -210,9 +210,9 @@ export default function Home() {
 
         {/* Receipt Modal */}
         {showReceipt && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <Card className="max-w-md w-full max-h-[80vh] overflow-hidden">
-              <CardContent className="p-6">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowReceipt(false)}>
+            <div className="max-w-md w-full max-h-[80vh] overflow-hidden rounded-lg border bg-white dark:bg-zinc-900 shadow-xl" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6">
                 <h2 className="text-2xl font-bold mb-4">Your Receipt</h2>
                 <ScrollArea className="h-[400px] mb-4">
                   {Object.values(purchases).length === 0 ? (
@@ -263,8 +263,8 @@ export default function Home() {
                 >
                   Close
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         )}
       </div>
