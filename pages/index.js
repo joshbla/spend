@@ -143,18 +143,30 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Dark mode toggle in top-right corner */}
+      <div className="absolute top-4 right-4 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setDarkMode(!darkMode)}
+          className="rounded-full"
+        >
+          {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </Button>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex justify-center items-center gap-4 mb-4">
-            <h1 className="text-4xl font-bold">Spend</h1>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold">Spend</h1>
             <Select
               value={selectedBillionaire.id}
               onChange={(e) => {
                 const billionaire = billionaires.find(b => b.id === e.target.value)
                 setSelectedBillionaire(billionaire)
               }}
-              className="w-48"
+              className="w-48 order-3 sm:order-2"
             >
               {billionaires.map(billionaire => (
                 <option key={billionaire.id} value={billionaire.id}>
@@ -162,15 +174,7 @@ export default function Home() {
                 </option>
               ))}
             </Select>
-            <h1 className="text-4xl font-bold">Money</h1>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setDarkMode(!darkMode)}
-              className="ml-4"
-            >
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+            <h1 className="text-3xl sm:text-4xl font-bold order-2 sm:order-3">Money</h1>
           </div>
           
           {/* Money Display */}
