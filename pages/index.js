@@ -5,7 +5,7 @@ import { Card, CardContent } from '../components/ui/card'
 import { Select } from '../components/ui/select'
 import { Input } from '../components/ui/input'
 import { ScrollArea } from '../components/ui/scroll-area'
-import { ShoppingCart, Moon, Sun } from 'lucide-react'
+import { ShoppingCart, Moon, Sun, Twitter, Facebook, Linkedin, Copy, Share2 } from 'lucide-react'
 
 export default function Home() {
   const [selectedBillionaire, setSelectedBillionaire] = useState(billionaires[0])
@@ -95,6 +95,50 @@ export default function Home() {
     setPurchases({})
     setRemainingMoney(selectedBillionaire.netWorth)
     setShowCheckout(false)
+  }
+
+  const getShareText = () => {
+    const spent = formatMoney(getTotalSpent())
+    const percentage = getPercentageSpent()
+    return `I just spent ${spent} (${percentage}% of ${selectedBillionaire.name}'s net worth) on a virtual shopping spree! 💸`
+  }
+
+  const getCurrentUrl = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.href
+    }
+    return ''
+  }
+
+  const shareToTwitter = () => {
+    const text = encodeURIComponent(getShareText())
+    const url = encodeURIComponent(getCurrentUrl())
+    const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`
+    window.open(shareUrl, '_blank', 'width=600,height=400')
+  }
+
+  const shareToFacebook = () => {
+    const url = encodeURIComponent(getCurrentUrl())
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`
+    window.open(shareUrl, '_blank', 'width=600,height=400')
+  }
+
+  const shareToLinkedIn = () => {
+    const text = encodeURIComponent(getShareText())
+    const url = encodeURIComponent(getCurrentUrl())
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}&summary=${text}`
+    window.open(shareUrl, '_blank', 'width=600,height=400')
+  }
+
+  const copyToClipboard = async () => {
+    try {
+      const text = `${getShareText()}\n\nTry it yourself: ${getCurrentUrl()}`
+      await navigator.clipboard.writeText(text)
+      // You might want to show a toast notification here
+      alert('Copied to clipboard!')
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
   }
 
   return (
@@ -311,6 +355,47 @@ export default function Home() {
                   <p className="text-lg italic">
                     "{getCheckoutMessage(parseFloat(getPercentageSpent()))}"
                   </p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-sm text-muted-foreground mb-3 flex items-center justify-center gap-1">
+                    <Share2 className="h-4 w-4" />
+                    Share your results
+                  </p>
+                  <div className="flex gap-2 justify-center">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={shareToTwitter}
+                      className="hover:bg-blue-100 dark:hover:bg-blue-900"
+                    >
+                      <Twitter className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={shareToFacebook}
+                      className="hover:bg-blue-600/10 dark:hover:bg-blue-600/20"
+                    >
+                      <Facebook className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={shareToLinkedIn}
+                      className="hover:bg-blue-700/10 dark:hover:bg-blue-700/20"
+                    >
+                      <Linkedin className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={copyToClipboard}
+                      className="hover:bg-accent"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="space-y-2">
